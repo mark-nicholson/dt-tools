@@ -5,6 +5,9 @@ __pycache__/
 # C extensions
 *.so
 
+# cruft
+*~
+
 # Distribution / packaging
 .Python
 env/
