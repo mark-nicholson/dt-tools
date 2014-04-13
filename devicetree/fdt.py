@@ -47,6 +47,9 @@ class FDTBase(object):
         for field,fmt in self._fields:
             bstr += self._py_to_fdt(getattr(self, field))
         return bstr
+
+    def value_text(self):
+        raise NotImplemented("You must override value_text()")
     
     def __str__(self):
         s = self.__class__.__name__ + '('
@@ -140,6 +143,9 @@ class FDTNodeHeader(FDTBase):
         # done
         return length
 
+    def value_text(self):
+        return ''
+
     @staticmethod
     def _disp_name(name):
         if name is None:
@@ -204,6 +210,9 @@ class FDTProperty(FDTBase):
         # done
         return length
 
+    def value_text(self):
+        return "<debug me>"
+
 
 class FDTStringProperty(FDTProperty):
 
@@ -213,7 +222,7 @@ class FDTStringProperty(FDTProperty):
         self._fields += [ 'text' ]
 
         # should convert it to a string
-        self.text = self.data
+        self.text = self.data.decode('UTF-8')
 
     def Match(prop):
         Tags = [
@@ -228,6 +237,9 @@ class FDTStringProperty(FDTProperty):
             # check for only printable chars, followed only by up to 4 '\0' bytes
             pass
         return False
+
+    def value_text(self):
+        return self.text
 
 
 class FDTIntegerProperty(FDTProperty):
@@ -256,6 +268,9 @@ class FDTIntegerProperty(FDTProperty):
     @staticmethod
     def _disp_value(value):
         return hex(value)
+
+    def value_text(self):
+        return self._disp_value( self.value )
 
 
 class FDTArrayProperty(FDTProperty):
@@ -290,6 +305,9 @@ class FDTArrayProperty(FDTProperty):
             s += hex(i) + ' >'
         return s
 
+    def value_text(self):
+        return self._disp_items( self.items )
+
 
 class FDTAction(object):
 
@@ -320,7 +338,7 @@ class FDT(object):
 
     def CreateProperty(self, offset):
         # Generate a generic property
-        prop = FDTProperty(fdt, offset)
+        prop = FDTProperty(self, offset)
 
         # update the type
         if FDTStringProperty.Match(prop):
@@ -347,15 +365,6 @@ class FDT(object):
             # grab a header
             item = FDTNodeHeader(self, offset)
 
-            # re-brand if it is actually a property
-            if item.tag == FDTTags.PROP:
-                item = self.CreateProperty(offset)
-
-
-            # manage this node
-            action.manage(self, offset, item)
-
-
             if item.tag == FDTTags.END_NODE:
                 #print("WALK: END_NODE found,  offset = %d" % offset)
                 offset += 4
@@ -372,6 +381,12 @@ class FDT(object):
                 continue
 
             if item.tag == FDTTags.PROP:
+                # rebrand
+                item = self.CreateProperty(offset)
+
+                # manage this node
+                action.manage(self, offset, item)
+                
                 #print("WALK: PROP found,  offset = %d" % offset)
                 #print("DEBUG: align_length = %d" % len(item))
                 #print("DEBUG: " + str(item))
@@ -395,33 +410,33 @@ class FDT(object):
     
 
 
+class DebugAction(FDTAction):
+    def __init__(self):
+        super().__init__()
+        self.depth = 0
+
+    def manage(self, fdt, offset, item):
+        self.msg('MANAGE: ', item, offset)
+
+    def enter(self, fdt, offset, item):
+        self.depth += 1
+        self.msg('ENTER: ', item, offset)
+
+    def exit(self, fdt, offset, item):
+        self.msg('EXIT: ', item, offset)
+        self.depth -= 1
+
+    def msg(self, text, item, offset):
+        pad = '    ' * self.depth
+        #print(pad + text + item.__class__.__name__ + '@%d' % offset)
+        print(pad + text + '%d: ' % offset + str(item))
+
+                
 if __name__ == "__main__":
     fdt = FDT('devicetree/test/spear1310-evb.dtb')
 
     print(fdt.header)
 
-    class DebugAction(FDTAction):
-        def __init__(self):
-            super().__init__()
-            self.depth = 0
-
-        def manage(self, fdt, offset, item):
-            self.msg('MANAGE: ', item, offset)
-
-        def enter(self, fdt, offset, item):
-            self.depth += 1
-            self.msg('ENTER: ', item, offset)
-
-        def exit(self, fdt, offset, item):
-            self.msg('EXIT: ', item, offset)
-            self.depth -= 1
-
-        def msg(self, text, item, offset):
-            pad = '    ' * self.depth
-            #print(pad + text + item.__class__.__name__ + '@%d' % offset)
-            print(pad + text + '%d: ' % offset + str(item))
-
-                
     action = DebugAction()
     fdt.walk(action)
     

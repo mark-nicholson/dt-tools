@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>824</width>
+    <height>761</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,18 +28,22 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QTreeWidget" name="treeWidget">
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
-      </widget>
+      <widget class="QTreeView" name="treeView"/>
      </item>
      <item>
       <widget class="QGraphicsView" name="graphicsView"/>
      </item>
     </layout>
+   </widget>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>550</y>
+      <width>801</width>
+      <height>161</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -47,7 +51,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>824</width>
      <height>25</height>
     </rect>
    </property>

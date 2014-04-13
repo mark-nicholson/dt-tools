@@ -6,23 +6,100 @@
 #
 
 import sys
+import os
 import platform
 
-import PySide
-from PySide import QtCore, QtGui
-from PySide.QtGui import QIcon
+# pyside resources
+from PySide import QtCore
+from PySide.QtGui import *
 
 # grab the autogen UI
 from dtgui import Ui_MainWindow
 
+# pull int FDT tools
+from devicetree.dtc import DTC
+from devicetree.fdt import FDT, FDTAction
+
+# helpful later
 __version__ = "0.1"
+
+class DebugAction(FDTAction):
+    def __init__(self, mc):
+        super().__init__()
+        self.depth = 0
+        self.mc = mc
+
+    def manage(self, fdt, offset, item):
+        self.msg('MANAGE: ', item, offset)
+
+    def enter(self, fdt, offset, item):
+        self.depth += 1
+        self.msg('ENTER: ', item, offset)
+        
+    def exit(self, fdt, offset, item):
+        self.msg('EXIT: ', item, offset)
+        self.depth -= 1
+
+    def msg(self, text, item, offset):
+        pad = '    ' * self.depth
+        self.mc.textEdit.append(pad + text + '%d: ' % offset + str(item))
+
+
+class ModelGeneratorAction(FDTAction):
+    """Action class to iterate through the FDT and generate the Model suitable for the QTreeView"""
+    
+    def __init__(self, modelRoot, mainWindow=None):
+        super().__init__()
+        self.depth = 0
+        self.mainWindow = mainWindow
+        self.modelRoot = modelRoot
+        self.stack = [ modelRoot ]
+
+    def manage(self, fdt, offset, item):
+        self.msg('MANAGE: ', item, offset)
+        namestr = item.name
+        if isinstance(namestr, bytes):
+            namestr = namestr.decode('UTF-8')
+        name = QStandardItem(namestr)
+        value = QStandardItem( item.value_text() )
+        self.stack[self.depth].appendRow( [name, value] )
+
+    def enter(self, fdt, offset, item):
+
+        namestr = item.name
+        if isinstance(namestr, bytes):
+            namestr = namestr.decode('UTF-8')
+        name = QStandardItem(namestr + '/')
+        value = QStandardItem( item.value_text() )
+        self.stack[self.depth].appendRow( [name, value] )
+
+        # push!
+        self.stack.append( name )
+        self.depth += 1
+
+        # report
+        self.msg('ENTER: ', item, offset)
+        
+    def exit(self, fdt, offset, item):
+        self.msg('EXIT: ', item, offset)
+        item = self.stack.pop()
+        self.depth -= 1
+
+    def msg(self, text, item, offset):
+        if self.mainWindow is None:
+            return
+        pad = '    ' * self.depth
+        self.mainWindow.textEdit.append(pad + text + '%d: ' % offset + str(item))
+
+                
 
 #
 # Multiply inherit because we mainly need to be a QMainWindow with
 # some features...
 #
-class ControlMainWindow(QtGui.QMainWindow, Ui_MainWindow):
-    def __init__(self, parent=None):
+class ControlMainWindow(QMainWindow, Ui_MainWindow):
+    
+    def __init__(self, args, parent=None):
         super(ControlMainWindow, self).__init__(parent)
         self.setupUi(self)
 
@@ -38,36 +115,90 @@ class ControlMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionLoad.setIcon(QIcon(":/load.png"))
         self.actionLoad.setStatusTip("Pop up the Load dialog.")
 
+        # placeholder for the model
+        self.fdt_model = None
+
+        # configure the tree view
+        self.treeView.setModel(self.fdt_model)
+        self.treeView.setUniformRowHeights(True)
+
+
 
     def xdo_actionLoad(self):
          MESSAGE = "<p>Message boxes have a caption, a text, and up to three " \
 "buttons, each with standard or custom texts.</p>" \
 "<p>Click a button to close the message box. Pressing the Esc " \
 "button will activate the detected escape button (if any).</p>"
-         reply = QtGui.QMessageBox.critical(self, "QMessageBox.critical()",
-                                            MESSAGE,
-                                            QtGui.QMessageBox.Abort | QtGui.QMessageBox.Retry | QtGui.QMessageBox.Ignore)
+         reply = QMessageBox.critical(self, "QMessageBox.critical()",
+                                      MESSAGE,
+                                      QMessageBox.Abort | QMessageBox.Retry | QMessageBox.Ignore)
 
     def do_actionLoad(self):
-
-        #options = QtGui.QFileDialog.Options()
+        self.textEdit.append("Running actionLoad()")
+        #options = QFileDialog.Options()
         options = None
         #if not self.native.isChecked():
-        #    options |= QtGui.QFileDialog.DontUseNativeDialog
-        fileName, filtr = QtGui.QFileDialog.getOpenFileName(
+        #    options |= QFileDialog.DontUseNativeDialog
+        fileName, filtr = QFileDialog.getOpenFileName(
             self,
             "QFileDialog.getOpenFileName()",
             "Tomato",
-            "All Files (*);;Text Files (*.txt)",
+            "All Files (*);; DeviceTree Source (*.dts);; DeviceTree Binary (*.dtb)",
             options)
 
-        if fileName:
-            #self.openFileNameLabel.setText(fileName)
-            print("Got Filename: " + fileName)
+        # not sure if this is possible
+        if not fileName or not os.path.exists(fileName):
+            QMessageBox.warning(self, "File %s was not found." % fileName, "Please select a valid file",
+                                      QMessageBox.Ok)
+            return
+
+        # ok, now rip it up
+        #QMessageBox.information(self,
+        #                              "File was found.",
+        #                              "'%s' seems to be a valid file"  % fileName,
+        #                              QMessageBox.Ok)
+
+        # if it is a DTS file, compile it
+        if fileName.endswith('.dts'):
+            print("Compiling DTS into DTB")
+
+        self.treeView.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.treeView.setUniformRowHeights(True)
+
+        # try to parse it
+        self.fdt = FDT(fileName)
+
+        # create the model
+        self.fdt_model = QStandardItemModel()
+        self.fdt_model.setHorizontalHeaderLabels(['Name', 'Value'])
+        self.treeView.setModel(self.fdt_model)
+
+        # create top level item
+        root = QStandardItem(os.path.basename(fileName))
+        emptyItem = QStandardItem('')
+        self.fdt_model.appendRow( [ root, emptyItem ] )
+        
+        # put in the header
+        header = QStandardItem('Header')
+        for field in self.fdt.header._fields:
+            item = QStandardItem(field)
+            value = QStandardItem(str(getattr(self.fdt.header, field)))
+            header.appendRow( [ item, value ] )
+
+        emptyItem = QStandardItem('')
+        root.appendRow( [ header, emptyItem ] )
+
+        # iterate over the tree
+        action = ModelGeneratorAction(root, self)
+        self.fdt.walk(action)
+ 
+        # display it
+        self.treeView.show()
+
 
 
     def do_actionAbout(self):
-        QtGui.QMessageBox.about(self, "About PySide, Platform and version.",
+        QMessageBox.about(self, "About PySide, Platform and version.",
                 """<b> about.py version %s </b> 
                 <p>Copyright &copy; 2013 by Algis Kabaila. 
                 This work is made available under  the terms of
@@ -77,13 +208,13 @@ class ControlMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 Qt version and other details.
                 <p>Python %s -  PySide version %s - Qt version %s on %s""" %
                 (__version__, platform.python_version(), PySide.__version__,
-                 PySide.QtCore.__version__, platform.system()))                 
+                 QtCore.__version__, platform.system()))                 
 
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    mySW = ControlMainWindow()
+    app = QApplication(sys.argv)
+    mySW = ControlMainWindow(sys.argv)
     mySW.show()
     sys.exit(app.exec_())
 
