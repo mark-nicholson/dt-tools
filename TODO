@@ -1,0 +1,19 @@
+#
+#  Basic list of things to be done
+#
+
+- update the GUI so that the window can:
+  	 - resize when the user pulls it 
+	 - scales correctly for each pane
+
+- add a console dialog where the logging output goes
+      - create a menu item to display it
+      - remove the bottom pane
+
+- modify tree view to auto expand both the header and the root node on creation
+- estimate the size of treeview name column and set the default width to that
+
+- if a DTS is selected, open the "conversion" dialogue
+     - create the conversion dialog to drive DTC
+
+- create display widget to show the "address map"
