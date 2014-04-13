@@ -191,10 +191,22 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         # iterate over the tree
         action = ModelGeneratorAction(root, self)
         self.fdt.walk(action)
- 
+
+        # make the name column wide enough
+        self.treeView.resizeColumnToContents(0)
+
+        # make sure the root is expanded
+        r_idx = self.fdt_model.indexFromItem(root)
+        self.treeView.expand(r_idx)
+
+        # expand the top level entries by default...
+        for idx in range(root.rowCount()):
+            item = root.child(idx, 0)
+            tidx = self.fdt_model.indexFromItem(item)
+            self.treeView.expand(tidx)
+        
         # display it
         self.treeView.show()
-
 
 
     def do_actionAbout(self):
