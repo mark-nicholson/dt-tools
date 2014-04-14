@@ -20,6 +20,9 @@ from dtgui import Ui_MainWindow
 from devicetree.dtc import DTC
 from devicetree.fdt import FDT, FDTAction
 
+from devicetree.gui.DeviceTreeCompilerDialog import DeviceTreeCompilerDialog
+
+
 # helpful later
 __version__ = "0.1"
 
@@ -115,6 +118,11 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         self.actionLoad.setIcon(QIcon(":/load.png"))
         self.actionLoad.setStatusTip("Pop up the Load dialog.")
 
+        self.actionCompiler.triggered.connect(self.do_actionCompiler)
+        self.actionCompiler.setIcon(QIcon(":/compile.png"))
+        self.actionCompiler.setStatusTip("Pop up the Compile dialog.")
+
+
         # placeholder for the model
         self.fdt_model = None
 
@@ -122,7 +130,10 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         self.treeView.setModel(self.fdt_model)
         self.treeView.setUniformRowHeights(True)
 
-
+    def do_actionCompiler(self):
+        """Run the compilation dialog"""
+        dtcompiler = DeviceTreeCompilerDialog([], self)
+        dtcompiler.show()
 
     def xdo_actionLoad(self):
          MESSAGE = "<p>Message boxes have a caption, a text, and up to three " \
