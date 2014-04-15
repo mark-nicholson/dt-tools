@@ -42,11 +42,28 @@ Requirements:
 To Do List:
 -----------
 
+    * Add search capabilities for the FDT
+      	  - name by text, regex, ...
+	  - boolean logic to combine value match
 
     * if a DTS is selected, open the "conversion" dialogue
          - create the conversion dialog to drive DTC
 
-    * create display widget to show the "address map"
+    * create display widget to show the "address map" tab
+
+    * create display widget to show the "interrupt map" tab
+
+    * create a statistics display
+      	     File size
+	     version
+	     header size
+	     table size
+	     num blocks
+	     num properties
+	     max depth
+	     strings size
+	     strings count
+	     ...
 
     * put in docstrings!
          - Run Sphinx to generate docs

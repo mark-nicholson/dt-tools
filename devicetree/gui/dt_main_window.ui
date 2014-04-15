@@ -42,21 +42,54 @@
      </sizepolicy>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="graphicsView">
+   <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
       <x>500</x>
       <y>0</y>
-      <width>501</width>
+      <width>491</width>
       <height>651</height>
      </rect>
     </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>1</horstretch>
-      <verstretch>1</verstretch>
-     </sizepolicy>
+    <property name="currentIndex">
+     <number>1</number>
     </property>
+    <widget class="QWidget" name="memoryTab">
+     <attribute name="title">
+      <string>Memory</string>
+     </attribute>
+     <widget class="QGraphicsView" name="memoryGraphicsView">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>491</width>
+        <height>621</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="interruptTab">
+     <attribute name="title">
+      <string>Interrupts</string>
+     </attribute>
+     <widget class="QGraphicsView" name="interruptGraphicsView">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>481</width>
+        <height>621</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

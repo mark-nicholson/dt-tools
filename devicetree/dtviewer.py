@@ -84,6 +84,7 @@ class ModelGeneratorAction(FDTAction):
         self.msg('MANAGE: ', item, offset)
         self._update_max_name_width(item.name)
         name = QStandardItem(item.name)
+        name.setData( (fdt, offset, item) )
         value = QStandardItem( item.value_text() )
         self.stack[self.depth].appendRow( [name, value] )
 
@@ -126,11 +127,21 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         super(ControlMainWindow, self).__init__(parent)
         self.setupUi(self)
 
-        # adjust the layout to be proper -- the designer doesn't seem to be able to do this...
+        # adjust the tabs' layout
+        self.mtabLayout = QVBoxLayout()
+        self.mtabLayout.addWidget( self.memoryGraphicsView )
+        self.memoryTab.setLayout( self.mtabLayout )
+
+        self.itabLayout = QVBoxLayout()
+        self.itabLayout.addWidget( self.interruptGraphicsView )
+        self.interruptTab.setLayout( self.itabLayout )
+
+        # adjust the main window layout to be proper
+        #  -- the designer doesn't seem to be able to do this...
         self.hlayout = QHBoxLayout()
 
         self.hlayout.addWidget( self.treeView )
-        self.hlayout.addWidget( self.graphicsView )
+        self.hlayout.addWidget( self.tabWidget )
 
         self.centralwidget.setLayout(self.hlayout)
 
