@@ -2,7 +2,9 @@
 #  Utilities to speed up develpment
 #
 
-INTF_UI = devicetree/gui/dtgui.ui devicetree/gui/compiler_dialog.ui devicetree/gui/console_dialog.ui
+INTF_UI = devicetree/gui/dt_main_window.ui \
+          devicetree/gui/compiler_dialog.ui \
+          devicetree/gui/console_dialog.ui
 INTF_PY = $(INTF_UI:.ui=.py)
 
 help:
@@ -19,7 +21,7 @@ designer:
 	designer-qt4 &
 
 run: $(INTF_PY)
-	PYTHONPATH=. python3 devicetree/gui/dtg.py
+	PYTHONPATH=. python3 devicetree/dtviewer.py
 
 
 build-ui: $(INTF_PY)
@@ -35,9 +37,10 @@ info:
 	@echo "INTF_PY = $(INTF_PY)"
 
 clean:
-	@rm -rf build
-	@rm $(INTF_PY)
-	@find . -name '*~' | xargs /bin/rm
+	rm -rf build
+	rm -f $(INTF_PY)
+	find . -name '*~' | xargs /bin/rm -f
+	find . -name '__pycache__' | xargs /bin/rm -rf
 
 distclean: clean
 	rm -rf venv

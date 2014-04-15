@@ -10,11 +10,12 @@ import os
 import platform
 
 # pyside resources
+from PySide import __version__ as __pyside_version__
 from PySide import QtCore
 from PySide.QtGui import *
 
 # grab the autogen UI
-from dtgui import Ui_MainWindow
+from devicetree.gui.dt_main_window import Ui_MainWindow
 
 # pull int FDT tools
 from devicetree.dtc import DTC
@@ -54,26 +55,41 @@ class ModelGeneratorAction(FDTAction):
     
     def __init__(self, modelRoot, mainWindow=None):
         super().__init__()
-        self.depth = 0
+        self._depth = 0
+        self._max_depth = 0
         self.mainWindow = mainWindow
         self.modelRoot = modelRoot
         self.stack = [ modelRoot ]
+        self.max_name_width = 0
+        
+    @property
+    def depth(self):
+        return self._depth
+    
+    @depth.setter
+    def depth(self, value):
+        self._depth = value
+        if self._depth > self._max_depth:
+            self._max_depth = self._depth
+
+    @property
+    def max_depth(self):
+        return self._max_depth
+
+    def _update_max_name_width(self, new_name):
+        if len(new_name) > self.max_name_width:
+            self.max_name_width = len(new_name)
 
     def manage(self, fdt, offset, item):
         self.msg('MANAGE: ', item, offset)
-        namestr = item.name
-        if isinstance(namestr, bytes):
-            namestr = namestr.decode('UTF-8')
-        name = QStandardItem(namestr)
+        self._update_max_name_width(item.name)
+        name = QStandardItem(item.name)
         value = QStandardItem( item.value_text() )
         self.stack[self.depth].appendRow( [name, value] )
 
     def enter(self, fdt, offset, item):
-
-        namestr = item.name
-        if isinstance(namestr, bytes):
-            namestr = namestr.decode('UTF-8')
-        name = QStandardItem(namestr + '/')
+        self._update_max_name_width(item.name)
+        name = QStandardItem(item.name + '/')
         value = QStandardItem( item.value_text() )
         self.stack[self.depth].appendRow( [name, value] )
 
@@ -89,11 +105,14 @@ class ModelGeneratorAction(FDTAction):
         item = self.stack.pop()
         self.depth -= 1
 
-    def msg(self, text, item, offset):
+    def log(self, text):
         if self.mainWindow is None:
             return
         pad = '    ' * self.depth
-        self.mainWindow.log(pad + text + '%d: ' % offset + str(item))
+        self.mainWindow.log(pad + text)
+        
+    def msg(self, text, item, offset):
+        self.log(text + '%d: ' % offset + str(item))
 
                 
 
@@ -164,8 +183,10 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
 
         # not sure if this is possible
         if not fileName or not os.path.exists(fileName):
-            QMessageBox.warning(self, "File %s was not found." % fileName, "Please select a valid file",
-                                      QMessageBox.Ok)
+            QMessageBox.warning(self,
+                                "File %s was not found." % fileName,
+                                "Please select a valid file",
+                                QMessageBox.Ok)
             return
 
         # if it is a DTS file, compile it
@@ -203,8 +224,8 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         action = ModelGeneratorAction(root, self)
         self.fdt.walk(action)
 
-        # make the name column wide enough
-        self.treeView.resizeColumnToContents(0)
+        print("Max Name:  %d" % action.max_name_width)
+        print("Max Depth: %d" % action.max_depth)
 
         # make sure the root is expanded
         r_idx = self.fdt_model.indexFromItem(root)
@@ -216,21 +237,28 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
             tidx = self.fdt_model.indexFromItem(item)
             self.treeView.expand(tidx)
         
+        # make the name column wide enough
+        self.treeView.resizeColumnToContents(0)
+
         # display it
         self.treeView.show()
 
 
     def do_actionAbout(self):
-        QMessageBox.about(self, "About PySide, Platform and version.",
-                """<b> about.py version %s </b> 
-                <p>Copyright &copy; 2013 by Algis Kabaila. 
-                This work is made available under  the terms of
-                Creative Commons Attribution-ShareAlike 3.0 license,
-                http://creativecommons.org/licenses/by-sa/3.0/.
-                <p>This application is useful for displaying  
-                Qt version and other details.
-                <p>Python %s -  PySide version %s - Qt version %s on %s""" %
-                (__version__, platform.python_version(), PySide.__version__,
+        QMessageBox.about(self, "Device Tree Viewer",
+                """<h3> dtviewer.py version %s </h3> 
+                <p>Copyright &copy; 2014 by Mark Nicholson. 
+                This work is made available under  the terms of BSDv3 license.
+                <p>This application provides a visual interface to work with
+                Flattened Device Tree files and their details.
+                <h3>Versions:</h3>
+                <ul>
+                <li>Python %s
+                <li>PySide version %s
+                <li>Qt version %s
+                <li>Host OS: %s
+                </ul>""" %
+                (__version__, platform.python_version(), __pyside_version__,
                  QtCore.__version__, platform.system()))                 
 
     def log(self, data):

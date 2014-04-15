@@ -6,7 +6,7 @@ from PySide import QtCore
 from PySide.QtGui import *
 
 # grab the autogen UI
-from console_dialog import Ui_ConsoleDialog
+from devicetree.gui.console_dialog import Ui_ConsoleDialog
 
 class ConsoleDialog(QDialog, Ui_ConsoleDialog):
     

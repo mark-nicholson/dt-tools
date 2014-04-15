@@ -8,7 +8,7 @@ from PySide import QtCore
 from PySide.QtGui import *
 
 # grab the autogen UI
-from compiler_dialog import Ui_CompilerDialog
+from devicetree.gui.compiler_dialog import Ui_CompilerDialog
 
 # pull int FDT tools
 from devicetree.dtc import DTC

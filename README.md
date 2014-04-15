@@ -43,8 +43,6 @@ To Do List:
 -----------
 
 
-    * estimate the size of treeview name column and set the default width to that
-
     * if a DTS is selected, open the "conversion" dialogue
          - create the conversion dialog to drive DTC
 
@@ -52,7 +50,3 @@ To Do List:
 
     * put in docstrings!
          - Run Sphinx to generate docs
-
-    * Tidy up FDT to ensure that python variables hold TRANSLATED data (endianness corrected integers and decoded strings)
-
-    * Remove hacks to work around 'bytes' being passed to QT constructors
