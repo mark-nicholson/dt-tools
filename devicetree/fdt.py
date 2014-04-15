@@ -186,7 +186,9 @@ class FDTProperty(FDTBase):
             s = fdt.header.off_dt_strings + self.name_offset
             e = self._fdt.data.find(b'\x00', s)
             if e > 0:
-                self.name = self._fdt.data[s:e]
+                name = self._fdt.data[s:e]
+                name.rstrip(b'\x00')
+                self.name = name.decode('ascii')
             else:
                 self.name = "<invalid>"
                 print("FDTProperty: error: failed to locate end of name string")
@@ -233,8 +235,13 @@ class FDTStringProperty(FDTProperty):
         if (prop.length % 4) != 0:
             return True
         else:
-            # check for only printable chars, followed only by up to 4 '\0' bytes
-            pass
+            try:
+                s = prop.data.decode('ascii')
+                clean = s.rstrip('\x00')
+                return clean.isprintable()
+            except UnicodeDecodeError as ude:
+                # decode choked -- not ASCII
+                return False
         return False
 
     def value_text(self):
@@ -258,7 +265,7 @@ class FDTIntegerProperty(FDTProperty):
             ]
         if prop.name in Tags:
             return True
-        if prop.name.startswith(b'#'):
+        if prop.name.startswith('#'):
             return True
         if prop.length == 4:
             return True
@@ -415,7 +422,6 @@ class DebugAction(FDTAction):
 
     def msg(self, text, item, offset):
         pad = '    ' * self.depth
-        #print(pad + text + item.__class__.__name__ + '@%d' % offset)
         print(pad + text + '%d: ' % offset + str(item))
 
                 
