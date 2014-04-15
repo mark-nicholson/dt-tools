@@ -43,8 +43,6 @@ To Do List:
 -----------
 
 
-    * Validate the DTC gui build and tie in the gui options to the command line.
-
     * estimate the size of treeview name column and set the default width to that
 
     * if a DTS is selected, open the "conversion" dialogue

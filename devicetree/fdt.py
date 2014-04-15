@@ -84,7 +84,6 @@ class FDTHeader(FDTBase):
         offset = 0
 
         for field in self._fields:
-            print("%s -> %d" % (field, offset))
             setattr(self, field, self._fdt32_to_py(self._fdt.data, offset))
             offset += 4
 
@@ -366,15 +365,11 @@ class FDT(object):
             item = FDTNodeHeader(self, offset)
 
             if item.tag == FDTTags.END_NODE:
-                #print("WALK: END_NODE found,  offset = %d" % offset)
                 offset += 4
                 break
 
             if item.tag == FDTTags.BEGIN_NODE:
-                #print("WALK: BEGIN_NODE found,  offset = %d" % offset)
                 noff = offset + len(item)
-                #print("DEBUG: " + str(item))
-                #print("DEBUG: noff = %d" % noff)
                 action.enter(self, offset, item)
                 offset = self.walk(action, noff) 
                 action.exit(self, offset, item)
@@ -386,26 +381,18 @@ class FDT(object):
 
                 # manage this node
                 action.manage(self, offset, item)
-                
-                #print("WALK: PROP found,  offset = %d" % offset)
-                #print("DEBUG: align_length = %d" % len(item))
-                #print("DEBUG: " + str(item))
                 offset = offset + len(item)
                 continue
             
             if item.tag == FDTTags.NOP:
-                #print("WALK: NOP found,  offset = %d" % offset)
                 offset += 4
                 continue
 
             if item.tag == FDTTags.END:
-                #print("WALK: END found,  offset = %d" % offset)
                 offset += 4
                 break
 
         # close out this node
-        #action.exit(self, offset, item)
-
         return offset
     
 

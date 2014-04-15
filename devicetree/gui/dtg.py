@@ -154,15 +154,11 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         self.consoleDialog.show()
 
     def do_actionLoad(self):
-        self.log("Running actionLoad()")
-        #options = QFileDialog.Options()
         options = None
-        #if not self.native.isChecked():
-        #    options |= QFileDialog.DontUseNativeDialog
         fileName, filtr = QFileDialog.getOpenFileName(
             self,
-            "QFileDialog.getOpenFileName()",
-            "Tomato",
+            "Load a Device Tree to Display ...",
+            "",
             "All Files (*);; DeviceTree Source (*.dts);; DeviceTree Binary (*.dtb)",
             options)
 
@@ -172,15 +168,10 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
                                       QMessageBox.Ok)
             return
 
-        # ok, now rip it up
-        #QMessageBox.information(self,
-        #                              "File was found.",
-        #                              "'%s' seems to be a valid file"  % fileName,
-        #                              QMessageBox.Ok)
-
         # if it is a DTS file, compile it
         if fileName.endswith('.dts'):
-            print("Compiling DTS into DTB")
+            print("Need to compile DTS into DTB...")
+            return
 
         self.treeView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.treeView.setUniformRowHeights(True)

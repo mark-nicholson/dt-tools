@@ -1,3 +1,5 @@
+# common bits
+import sys
 
 # pyside resources
 from PySide import QtCore
@@ -29,3 +31,8 @@ class ConsoleDialog(QDialog, Ui_ConsoleDialog):
     def log(self, data):
         self.textEdit.append(data)
         
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    dlg = ConsoleDialog(sys.argv)
+    dlg.show()
+    sys.exit(app.exec_())

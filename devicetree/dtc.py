@@ -13,7 +13,7 @@ class DTC(object):
 
     # private options
     _format_choices = [ 'dts', 'dtb', 'asm' ]
-    _phandle_choices = [ '', 'legacy', 'phandle', 'both' ]
+    _phandle_choices = [ None, 'legacy', 'phandle', 'both' ]
         
 
     def __init__(self, compiler=None):
@@ -44,6 +44,9 @@ class DTC(object):
         proc.stdout.close()
         version = version.decode('UTF-8')
         self.version = version.split()[2]
+
+        # assume its real
+        self.debug = False
 
         # prep some common options
         self._in_file = None
@@ -136,22 +139,31 @@ class DTC(object):
         if self.out_version is not None:
             cmd += [ '--out-version ', '%d' % self.out_version ]
 
-        cmd += [ '--reserve',  '%d' % self.reserve ]
+        if self.reserve is not None:
+            cmd += [ '--reserve',  '%d' % self.reserve ]
 
         # mutual exclusion on space & pad
-        #cmd += [ '--space',  '%d' % self.space ]
-        cmd += [ '--pad',  '%d' % self.pad ]
+        if self.space is not None:
+            #cmd += [ '--space',  '%d' % self.space ]
+            pass
+
+        if self.pad is not None:
+            cmd += [ '--pad',  '%d' % self.pad ]
 
         # add the source file
         cmd.append( self.in_file )
 
         # run the tool
-        #print("DEBUG: cmd: " + str(cmd))
-        proc = Popen( cmd, stdout=PIPE)
-        log = proc.stdout.read()
-        proc.stdout.close()
-        proc.wait()
-        rc = proc.returncode
+        if self.debug:
+            print("DEBUG: cmd: " + str(cmd))
+            rc = 0
+            log = ""
+        else:
+            proc = Popen( cmd, stdout=PIPE)
+            log = proc.stdout.read()
+            proc.stdout.close()
+            proc.wait()
+            rc = proc.returncode
 
         # report
         return (rc, log)
