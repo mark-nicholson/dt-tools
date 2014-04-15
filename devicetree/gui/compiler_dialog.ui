@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>342</height>
+    <width>403</width>
+    <height>372</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>310</y>
+     <y>340</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -32,7 +32,7 @@
   <widget class="QLabel" name="dtsLabel">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>16</y>
      <width>66</width>
      <height>21</height>
@@ -42,7 +42,7 @@
     <string>In File:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="inLineEdit">
+  <widget class="QLineEdit" name="inFileLineEdit">
    <property name="geometry">
     <rect>
      <x>70</x>
@@ -65,7 +65,7 @@
     <string>...</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="outLineEdit">
+  <widget class="QLineEdit" name="outFileLineEdit">
    <property name="geometry">
     <rect>
      <x>70</x>
@@ -78,7 +78,7 @@
   <widget class="QLabel" name="dtbLabel">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>46</y>
      <width>66</width>
      <height>21</height>
@@ -101,100 +101,6 @@
     <string>...</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="padCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>90</y>
-     <width>97</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Padding</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="cpuidCheckBox">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>120</y>
-     <width>97</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>CPU ID</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="reserveCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>90</y>
-     <width>97</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Reserve</string>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="padSpinBox">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>90</y>
-     <width>71</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="cpuidSpinBox">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>120</y>
-     <width>71</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="reserveSpinBox">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>320</x>
-     <y>90</y>
-     <width>71</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="forceCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>150</y>
-     <width>97</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Force</string>
-   </property>
-  </widget>
   <widget class="QComboBox" name="inFileComboBox">
    <property name="geometry">
     <rect>
@@ -215,24 +121,11 @@
     </rect>
    </property>
   </widget>
-  <widget class="QCheckBox" name="sortCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>150</y>
-     <width>97</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Sort</string>
-   </property>
-  </widget>
   <widget class="QFrame" name="includesFrame">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>190</y>
+     <y>220</y>
      <width>401</width>
      <height>111</height>
     </rect>
@@ -256,7 +149,7 @@
      <string>Include Paths</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="listWidget">
+   <widget class="QListWidget" name="includeListWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -279,20 +172,26 @@
      <string>Add</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="includeEditButton">
+   <widget class="QPushButton" name="includeUpButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>330</x>
       <y>50</y>
-      <width>61</width>
+      <width>31</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>Edit</string>
+     <string>Up</string>
     </property>
    </widget>
    <widget class="QPushButton" name="includeRemoveButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>330</x>
@@ -305,72 +204,223 @@
      <string>Remove</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="includeDownButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>50</y>
+      <width>31</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dn</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QLabel" name="phandleLabel">
+  <widget class="QFrame" name="optionsFrame">
    <property name="geometry">
     <rect>
-     <x>223</x>
-     <y>156</y>
-     <width>66</width>
-     <height>21</height>
+     <x>0</x>
+     <y>80</y>
+     <width>401</width>
+     <height>131</height>
     </rect>
    </property>
-   <property name="text">
-    <string>pHandle</string>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
    </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QCheckBox" name="spaceCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>60</y>
+      <width>97</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Space</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="cpuidSpinBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>60</y>
+      <width>71</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="padCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>97</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Padding</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="sortCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>90</y>
+      <width>97</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sort</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="padSpinBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>30</y>
+      <width>71</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="suffix">
+     <string/>
+    </property>
+    <property name="maximum">
+     <number>16536</number>
+    </property>
+    <property name="singleStep">
+     <number>4</number>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="phandleComboBox">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>90</y>
+      <width>91</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cpuidCheckBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>97</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CPU ID</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="reserveCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>30</y>
+      <width>97</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reserve</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="forceCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>97</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Force</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="reserveSpinBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>30</y>
+      <width>71</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>16536</number>
+    </property>
+    <property name="singleStep">
+     <number>4</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="phandleLabel">
+    <property name="geometry">
+     <rect>
+      <x>223</x>
+      <y>96</y>
+      <width>66</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>pHandle</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spaceSpinBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>60</y>
+      <width>71</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="optionsLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>66</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Options</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QComboBox" name="phandleComboBox">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>150</y>
-     <width>91</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="spaceSpinBox">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>320</x>
-     <y>120</y>
-     <width>71</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="spaceCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>120</y>
-     <width>97</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Space</string>
-   </property>
-  </widget>
-  <action name="actionForce">
-   <property name="text">
-    <string>Force</string>
-   </property>
-   <property name="toolTip">
-    <string>Force the build to complete</string>
-   </property>
-  </action>
-  <action name="actionSort">
-   <property name="text">
-    <string>sort</string>
-   </property>
-   <property name="toolTip">
-    <string>Enable sorting in the DTB</string>
-   </property>
-  </action>
   <action name="actionChooseInFile">
    <property name="text">
     <string>chooseInFile</string>
@@ -385,6 +435,40 @@
    </property>
    <property name="toolTip">
     <string>Select the output file</string>
+   </property>
+  </action>
+  <action name="actionAddInclude">
+   <property name="text">
+    <string>AddInclude</string>
+   </property>
+  </action>
+  <action name="actionUpInclude">
+   <property name="text">
+    <string>upInclude</string>
+   </property>
+   <property name="toolTip">
+    <string>Move item up</string>
+   </property>
+  </action>
+  <action name="actionRemoveInclude">
+   <property name="text">
+    <string>removeInclude</string>
+   </property>
+  </action>
+  <action name="actionDownInclude">
+   <property name="text">
+    <string>downInclude</string>
+   </property>
+   <property name="toolTip">
+    <string>Move item down</string>
+   </property>
+  </action>
+  <action name="actionIncludeSelected">
+   <property name="text">
+    <string>includeSelected</string>
+   </property>
+   <property name="toolTip">
+    <string>Select an include entry</string>
    </property>
   </action>
  </widget>
@@ -483,6 +567,118 @@
     <hint type="destinationlabel">
      <x>355</x>
      <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>inFileSelectButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionChooseInFile</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>outFileSelectButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionChooseOutputFile</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>includeAddButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionAddInclude</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>170</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>includeUpButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionUpInclude</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>253</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>includeRemoveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionRemoveInclude</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>165</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>includeDownButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionDownInclude</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>375</x>
+     <y>253</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>includeListWidget</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>actionIncludeSelected</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>375</x>
+     <y>253</y>
     </hint>
    </hints>
   </connection>

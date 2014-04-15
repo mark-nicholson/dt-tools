@@ -21,6 +21,7 @@ from devicetree.dtc import DTC
 from devicetree.fdt import FDT, FDTAction
 
 from devicetree.gui.DeviceTreeCompilerDialog import DeviceTreeCompilerDialog
+from devicetree.gui.ConsoleDialog import ConsoleDialog
 
 
 # helpful later
@@ -45,7 +46,7 @@ class DebugAction(FDTAction):
 
     def msg(self, text, item, offset):
         pad = '    ' * self.depth
-        self.mc.textEdit.append(pad + text + '%d: ' % offset + str(item))
+        self.mc.log(pad + text + '%d: ' % offset + str(item))
 
 
 class ModelGeneratorAction(FDTAction):
@@ -92,7 +93,7 @@ class ModelGeneratorAction(FDTAction):
         if self.mainWindow is None:
             return
         pad = '    ' * self.depth
-        self.mainWindow.textEdit.append(pad + text + '%d: ' % offset + str(item))
+        self.mainWindow.log(pad + text + '%d: ' % offset + str(item))
 
                 
 
@@ -105,6 +106,18 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, args, parent=None):
         super(ControlMainWindow, self).__init__(parent)
         self.setupUi(self)
+
+        # adjust the layout to be proper -- the designer doesn't seem to be able to do this...
+        self.hlayout = QHBoxLayout()
+
+        self.hlayout.addWidget( self.treeView )
+        self.hlayout.addWidget( self.graphicsView )
+
+        self.centralwidget.setLayout(self.hlayout)
+
+
+        # setup the console
+        self.consoleDialog = ConsoleDialog(self)
 
         self.actionQuit.triggered.connect(self.close)
         self.actionQuit.setIcon(QIcon(":/quit.png"))
@@ -122,6 +135,7 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         self.actionCompiler.setIcon(QIcon(":/compile.png"))
         self.actionCompiler.setStatusTip("Pop up the Compile dialog.")
 
+        self.actionConsole.triggered.connect(self.do_actionConsole)
 
         # placeholder for the model
         self.fdt_model = None
@@ -130,22 +144,17 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         self.treeView.setModel(self.fdt_model)
         self.treeView.setUniformRowHeights(True)
 
+
     def do_actionCompiler(self):
         """Run the compilation dialog"""
         dtcompiler = DeviceTreeCompilerDialog([], self)
         dtcompiler.show()
 
-    def xdo_actionLoad(self):
-         MESSAGE = "<p>Message boxes have a caption, a text, and up to three " \
-"buttons, each with standard or custom texts.</p>" \
-"<p>Click a button to close the message box. Pressing the Esc " \
-"button will activate the detected escape button (if any).</p>"
-         reply = QMessageBox.critical(self, "QMessageBox.critical()",
-                                      MESSAGE,
-                                      QMessageBox.Abort | QMessageBox.Retry | QMessageBox.Ignore)
+    def do_actionConsole(self):
+        self.consoleDialog.show()
 
     def do_actionLoad(self):
-        self.textEdit.append("Running actionLoad()")
+        self.log("Running actionLoad()")
         #options = QFileDialog.Options()
         options = None
         #if not self.native.isChecked():
@@ -233,6 +242,9 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
                 (__version__, platform.python_version(), PySide.__version__,
                  QtCore.__version__, platform.system()))                 
 
+    def log(self, data):
+        console = self.consoleDialog
+        console.log(data)
 
 
 if __name__ == "__main__":

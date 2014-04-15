@@ -2,7 +2,7 @@
 #  Utilities to speed up develpment
 #
 
-INTF_UI = devicetree/gui/dtgui.ui devicetree/gui/compiler_dialog.ui
+INTF_UI = devicetree/gui/dtgui.ui devicetree/gui/compiler_dialog.ui devicetree/gui/console_dialog.ui
 INTF_PY = $(INTF_UI:.ui=.py)
 
 help:

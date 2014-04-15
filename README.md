@@ -42,15 +42,8 @@ Requirements:
 To Do List:
 -----------
 
-    * update the GUI so that the window can:
-  	 - resize when the user pulls it 
-	 - scales correctly for each pane
 
-    * add a console dialog where the logging output goes
-         - create a menu item to display it
-         - remove the bottom pane
-
-    * DONE - modify tree view to auto expand both the header and the root node on creation
+    * Validate the DTC gui build and tie in the gui options to the command line.
 
     * estimate the size of treeview name column and set the default width to that
 

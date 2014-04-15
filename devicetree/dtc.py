@@ -11,6 +11,11 @@ from subprocess import Popen, PIPE
 
 class DTC(object):
 
+    # private options
+    _format_choices = [ 'dts', 'dtb', 'asm' ]
+    _phandle_choices = [ '', 'legacy', 'phandle', 'both' ]
+        
+
     def __init__(self, compiler=None):
 
         # qualify a decent 'dtc' tool
@@ -40,10 +45,6 @@ class DTC(object):
         version = version.decode('UTF-8')
         self.version = version.split()[2]
 
-        # private options
-        self._format_choices = [ 'dts', 'dtb', 'asm' ]
-        self._phandle_choices = [ 'legacy', 'phandle', 'both' ]
-        
         # prep some common options
         self._in_file = None
         self.in_format = None
