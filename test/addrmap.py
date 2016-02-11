@@ -38,14 +38,21 @@ class UtilityWidget(QtGui.QWidget):
 
         p4 = QtGui.QPalette(QtGui.QColor(150, 150, 100))
         ae4 = AddressMapItem(0x0, 0x80, "SPI", p4)
+
+        listWidget = QtGui.QListWidget(self)
+        listWidget.addItem(ae1)
+        listWidget.addItem(ae2)
+        listWidget.addItem(ae3)
+        listWidget.addItem(ae4)
         
         layout = QtGui.QVBoxLayout()
-        layout.layoutSpacing = 0
+        layout.setSpacing(0)
         layout.addWidget(quit)
-        layout.addWidget(ae1)
-        layout.addWidget(ae2)
-        layout.addWidget(ae3)
-        layout.addWidget(ae4)
+        layout.addWidget(listWidget)
+        #layout.addWidget(ae1, stretch=1, alignment=QtCore.Qt.AlignBottom)
+        #layout.addWidget(ae2, stretch=2)
+        #layout.addWidget(ae3, stretch=3)
+        #layout.addWidget(ae4, stretch=4)
         self.setLayout(layout)
 
 

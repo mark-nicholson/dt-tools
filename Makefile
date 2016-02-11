@@ -45,5 +45,15 @@ clean:
 distclean: clean
 	rm -rf venv
 
-venv:
+#
+#  Utility for bootstrapping the virtual-env
+#
+get-pip.py:
+	wget https://bootstrap.pypa.io/get-pip.py
+
+venv: get-pip.py
 	@echo "Setting up VirtualEnv ..."
+	/usr/bin/python3 /usr/bin/pyvenv-3.4 $@ \
+		 --system-site-packages --without-pip
+	. $@/bin/activate && python3 get-pip.py
+

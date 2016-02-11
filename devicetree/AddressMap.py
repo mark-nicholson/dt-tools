@@ -1,11 +1,11 @@
 
-from PySide.QtCore import Qt, QSize
+from PySide.QtCore import Qt, QSize, QMargins
 from PySide.QtGui  import *
 
-#class AddressMapItem(QStandardItem):
+#class AddressMapItem(QListWidgetItem):
 class AddressMapItem(QWidget):
     def __init__(self, base, size, title, palette, parent=None):
-#        QStandardItem.__init__(self, parent)
+        #QListWidgetItem.__init__(self, parent)
         QWidget.__init__(self, parent)
 
         # remember the palette used to group these
@@ -30,7 +30,15 @@ class AddressMapItem(QWidget):
         self.frame.setMinimumSize(QSize(200, 100))
         self.frame.setPalette(self.palette)
         self.frame.setAutoFillBackground(True)
-        self.frame.setLineWidth(10)
+        self.frame.setLineWidth(1)
+        self.frame.setFrameStyle(QFrame.Panel | QFrame.Plain)
+
+        margins = QMargins()
+        margins.setTop(0)
+        margins.setBottom(0)
+        #self.setContentsMargins(margins)
+
+        
         self.frameLayout = QHBoxLayout()
         self.frameLayout.addWidget(self.titleLabel)
         self.frame.setLayout(self.frameLayout)
@@ -42,4 +50,9 @@ class AddressMapItem(QWidget):
         self.layout.addWidget(self.sizeLabel)
         
         self.setLayout(self.layout)
-        
+
+
+
+class AddressMap(QWidget):
+    """ A overall widget to display the full maps"""
+    pass

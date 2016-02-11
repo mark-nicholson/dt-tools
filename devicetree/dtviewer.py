@@ -129,11 +129,11 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
 
         # adjust the tabs' layout
         self.mtabLayout = QVBoxLayout()
-        self.mtabLayout.addWidget( self.memoryGraphicsView )
+        self.mtabLayout.addWidget( self.addressView )
         self.memoryTab.setLayout( self.mtabLayout )
 
         self.itabLayout = QVBoxLayout()
-        self.itabLayout.addWidget( self.interruptGraphicsView )
+        self.itabLayout.addWidget( self.interruptView )
         self.interruptTab.setLayout( self.itabLayout )
 
         # adjust the main window layout to be proper
@@ -168,11 +168,39 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         self.actionConsole.triggered.connect(self.do_actionConsole)
 
         # placeholder for the model
-        self.fdt_model = None
+        self._fdt_model = None
 
         # configure the tree view
-        self.treeView.setModel(self.fdt_model)
         self.treeView.setUniformRowHeights(True)
+
+    def updateSelection(current, previous):
+        print("Received an update!")
+        pass
+        
+    @property
+    def fdt_model(self):
+        """A property to manage the model."""
+        return self._fdt_model
+    
+    @fdt_model.setter
+    def fdt_model(self, model):
+        """The fdtmodel.setter provides feedback to automatically update
+        the views"""
+        self._fdt_model = model
+        self.treeView.setModel(model)
+        self.addressView.setModel(model)
+        self.interruptView.setModel(model)
+
+        if model is not None:
+            self.addressView.setSelectionModel( self.treeView.selectionModel() )
+            self.interruptView.setSelectionModel( self.treeView.selectionModel() )
+            # setup the selection mapping
+            tsm = self.treeView.selectionModel()
+            tsm.currentChanged.connect(self.updateSelection)
+            #QtCore.QObject.connect(self.treeView.selectionModel(),
+            #                       QtCore.SIGNAL("currentChanged()"),
+            #                       self.updateSelection)
+
 
 
     def do_actionCompiler(self):
@@ -214,7 +242,6 @@ class ControlMainWindow(QMainWindow, Ui_MainWindow):
         # create the model
         self.fdt_model = QStandardItemModel()
         self.fdt_model.setHorizontalHeaderLabels(['Name', 'Value'])
-        self.treeView.setModel(self.fdt_model)
 
         # create top level item
         root = QStandardItem(os.path.basename(fileName))

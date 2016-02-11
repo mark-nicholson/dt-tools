@@ -58,7 +58,7 @@
      <attribute name="title">
       <string>Memory</string>
      </attribute>
-     <widget class="QGraphicsView" name="memoryGraphicsView">
+     <widget class="QListView" name="addressView">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -67,24 +67,18 @@
         <height>621</height>
        </rect>
       </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="interruptTab">
      <attribute name="title">
       <string>Interrupts</string>
      </attribute>
-     <widget class="QGraphicsView" name="interruptGraphicsView">
+     <widget class="QListView" name="interruptView">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>481</width>
+        <width>491</width>
         <height>621</height>
        </rect>
       </property>
